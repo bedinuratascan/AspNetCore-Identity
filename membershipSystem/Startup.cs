@@ -29,7 +29,7 @@ namespace membershipSystem
             {
                 options.UseSqlServer(Configuration["ConnectionString:DefaultConnectionString"]);
             });
-            services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>();
+            services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppIdentityDbContext>();
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
 
