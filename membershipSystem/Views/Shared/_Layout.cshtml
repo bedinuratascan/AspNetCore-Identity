@@ -12,19 +12,29 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="#">Bedinur.com</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <a class="nav-link" asp-action="Home">Home <span class="sr-only">(current)</span></a>
-                <a class="nav item nav-link" asp-action="SignUp">Sign up</a>
-                <a class="nav-link" asp-action="LogIn">Login</a>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav item nav-link" asp-action="SignUp">Sign up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="LogIn">Login</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
     <div>
-        @RenderBody()
+        <div class="container">
+            @RenderBody()
+        </div>
     </div>
 </body>
 </html>

@@ -31,7 +31,14 @@ namespace membershipSystem
             {
                 options.UseSqlServer(Configuration["ConnectionString:DefaultConnectionString"]);
             });
-            services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppIdentityDbContext>();
+            services.AddIdentity<AppUser, AppRole>(option=> 
+            {
+                option.Password.RequiredLength = 4;
+                option.Password.RequireNonAlphanumeric = false;
+                option.Password.RequireLowercase = false;
+                option.Password.RequireUppercase = false;
+                option.Password.RequireDigit = false;
+            }).AddEntityFrameworkStores<AppIdentityDbContext>();
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
             services.AddAutoMapper(typeof(Startup));
