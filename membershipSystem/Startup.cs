@@ -27,13 +27,14 @@ namespace membershipSystem
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            
             services.AddDbContext<AppIdentityDbContext>(options =>
             {
                 options.UseSqlServer(Configuration["ConnectionString:DefaultConnectionString"]);
             });
             services.AddIdentity<AppUser, AppRole>(option=> 
             {
+                option.User.RequireUniqueEmail = true;
+                option.User.AllowedUserNameCharacters = "abcçdefðghýijklmnoöpqrsþtuüvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
                 option.Password.RequiredLength = 4;
                 option.Password.RequireNonAlphanumeric = false;
                 option.Password.RequireLowercase = false;
@@ -44,7 +45,6 @@ namespace membershipSystem
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
             services.AddAutoMapper(typeof(Startup));
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

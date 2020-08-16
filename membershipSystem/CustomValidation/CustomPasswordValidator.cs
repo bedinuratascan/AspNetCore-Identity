@@ -15,7 +15,10 @@ namespace membershipSystem.CustomValidation
 
             if (password.ToLower().Contains(user.UserName.ToLower()))
             {
-                errors.Add(new IdentityError { Code = "PasswordContainsUserName", Description = "Password Field does not contains UserName" });
+                if (!user.Email.Contains(user.UserName))
+                {
+                    errors.Add(new IdentityError { Code = "PasswordContainsUserName", Description = "Password Field does not contains UserName" });
+                }
             }
             if (password.ToLower().Contains("1234"))
             {
