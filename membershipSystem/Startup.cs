@@ -42,6 +42,7 @@ namespace membershipSystem
                 option.Password.RequireDigit = false;
             }).AddPasswordValidator<CustomPasswordValidator>()
             .AddUserValidator<CustomUserValidator>()
+            .AddErrorDescriber<CustomIdentityErrorDescriber>()
             .AddEntityFrameworkStores<AppIdentityDbContext>();
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
