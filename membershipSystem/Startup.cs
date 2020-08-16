@@ -41,6 +41,7 @@ namespace membershipSystem
                 option.Password.RequireUppercase = false;
                 option.Password.RequireDigit = false;
             }).AddPasswordValidator<CustomPasswordValidator>()
+            .AddUserValidator<CustomUserValidator>()
             .AddEntityFrameworkStores<AppIdentityDbContext>();
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
