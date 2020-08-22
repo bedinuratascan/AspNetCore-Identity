@@ -12,15 +12,37 @@ namespace membershipSystem.Controllers
 {
     public class HomeController : Controller
     {
-        public UserManager<AppUser> _userManager { get; }
+        public UserManager<AppUser> _userManager { get; set; }
+        public SignInManager<AppUser> _signInManager { get; set; }
         private readonly IMapper _mapper;
-        public HomeController(UserManager<AppUser> userManager, IMapper mapper)
+        public HomeController(UserManager<AppUser> userManager,SignInManager<AppUser> signInManager, IMapper mapper)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
             _mapper = mapper;
         }
         public IActionResult LogIn()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LogIn(LoginViewModel userLogin)
+        {
+            AppUser user = await _userManager.FindByEmailAsync(userLogin.Email);
+            if (user != null)
+            {
+                await _signInManager.SignOutAsync();
+                Microsoft.AspNetCore.Identity.SignInResult result= await _signInManager.PasswordSignInAsync(user, userLogin.Password, false, false);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Member");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Geçersiz Email Adresi veya Şifre");
+            }
             return View();
         }
         public IActionResult Index()
