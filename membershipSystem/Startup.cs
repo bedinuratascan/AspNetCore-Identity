@@ -31,6 +31,21 @@ namespace membershipSystem
             {
                 options.UseSqlServer(Configuration["ConnectionString:DefaultConnectionString"]);
             });
+
+            CookieBuilder cookieBuilder=new CookieBuilder();
+            cookieBuilder.Name = "blog";
+            cookieBuilder.HttpOnly = false;
+            cookieBuilder.Expiration = TimeSpan.FromDays(60);
+            cookieBuilder.SameSite = SameSiteMode.Lax;
+            cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+
+            services.ConfigureApplicationCookie(options=>
+            {
+                options.LoginPath = new PathString("/Home/Login");
+                options.Cookie = cookieBuilder;
+                options.SlidingExpiration = true;
+            });
+
             services.AddIdentity<AppUser, AppRole>(option=> 
             {
                 option.User.RequireUniqueEmail = true;
