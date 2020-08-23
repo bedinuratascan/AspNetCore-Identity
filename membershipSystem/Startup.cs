@@ -31,21 +31,7 @@ namespace membershipSystem
             {
                 options.UseSqlServer(Configuration["ConnectionString:DefaultConnectionString"]);
             });
-
-            CookieBuilder cookieBuilder=new CookieBuilder();
-            cookieBuilder.Name = "blog";
-            cookieBuilder.HttpOnly = false;
-            cookieBuilder.Expiration = TimeSpan.FromDays(60);
-            cookieBuilder.SameSite = SameSiteMode.Lax;
-            cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-
-            services.ConfigureApplicationCookie(options=>
-            {
-                options.LoginPath = new PathString("/Home/Login");
-                options.Cookie = cookieBuilder;
-                options.SlidingExpiration = true;
-            });
-
+            services.AddAutoMapper(typeof(Startup));
             services.AddIdentity<AppUser, AppRole>(option=> 
             {
                 option.User.RequireUniqueEmail = true;
@@ -60,8 +46,22 @@ namespace membershipSystem
             .AddErrorDescriber<CustomIdentityErrorDescriber>()
             .AddEntityFrameworkStores<AppIdentityDbContext>();
 
+            CookieBuilder cookieBuilder = new CookieBuilder();
+            cookieBuilder.Name = "blog";
+            cookieBuilder.HttpOnly = false;
+            cookieBuilder.SameSite = SameSiteMode.Lax;
+            cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = new PathString("/Home/Login");
+                options.Cookie = cookieBuilder;
+                options.SlidingExpiration = true;
+                options.ExpireTimeSpan = TimeSpan.FromDays(60);
+            });
+
             services.AddMvc(option => option.EnableEndpointRouting = false);
-            services.AddAutoMapper(typeof(Startup));
+         
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,8 +70,8 @@ namespace membershipSystem
             app.UseDeveloperExceptionPage();
             app.UseStatusCodePages();
             app.UseStaticFiles();
-            app.UseMvcWithDefaultRoute();
             app.UseAuthentication();
+            app.UseMvcWithDefaultRoute();
 
             //if (env.IsDevelopment())
             //{

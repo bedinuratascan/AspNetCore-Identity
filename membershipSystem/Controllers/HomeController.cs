@@ -21,11 +21,17 @@ namespace membershipSystem.Controllers
             _signInManager = signInManager;
             _mapper = mapper;
         }
-        public IActionResult LogIn()
+
+        public IActionResult Index()
         {
             return View();
         }
 
+        public IActionResult LogIn(string ReturnUrl)
+        {
+            TempData["ReturnUrl"] = ReturnUrl;
+            return View();
+        }
         [HttpPost]
         public async Task<IActionResult> LogIn(LoginViewModel userLogin)
         {
@@ -33,9 +39,13 @@ namespace membershipSystem.Controllers
             if (user != null)
             {
                 await _signInManager.SignOutAsync();
-                Microsoft.AspNetCore.Identity.SignInResult result= await _signInManager.PasswordSignInAsync(user, userLogin.Password, false, false);
+                Microsoft.AspNetCore.Identity.SignInResult result= await _signInManager.PasswordSignInAsync(user, userLogin.Password, userLogin.RememberMe, false);
                 if (result.Succeeded)
                 {
+                    if (TempData["ReturnUrl"] != null)
+                    {
+                        return Redirect(TempData["ReturnUrl"].ToString());
+                    }
                     return RedirectToAction("Index", "Member");
                 }
             }
@@ -43,12 +53,9 @@ namespace membershipSystem.Controllers
             {
                 ModelState.AddModelError("", "Geçersiz Email Adresi veya Şifre");
             }
-            return View();
+            return View(userLogin);
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+
         public IActionResult SignUp()
         {
             return View();
