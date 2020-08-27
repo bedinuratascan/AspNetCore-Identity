@@ -15,7 +15,7 @@ namespace membershipSystem.Controllers
         public UserManager<AppUser> _userManager { get; set; }
         public SignInManager<AppUser> _signInManager { get; set; }
         private readonly IMapper _mapper;
-        public HomeController(UserManager<AppUser> userManager,SignInManager<AppUser> signInManager, IMapper mapper)
+        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -45,7 +45,7 @@ namespace membershipSystem.Controllers
                     return View(userLogin);
                 }
                 await _signInManager.SignOutAsync();
-                Microsoft.AspNetCore.Identity.SignInResult result= await _signInManager.PasswordSignInAsync(user, userLogin.Password, userLogin.RememberMe, false);
+                Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(user, userLogin.Password, userLogin.RememberMe, false);
                 if (result.Succeeded)
                 {
                     await _userManager.ResetAccessFailedCountAsync(user);
@@ -79,7 +79,7 @@ namespace membershipSystem.Controllers
             }
             return View(userLogin);
         }
-        
+
         public IActionResult SignUp()
         {
             return View();
@@ -105,5 +105,35 @@ namespace membershipSystem.Controllers
             }
             return View(userViewModel);
         }
-    }
+
+        public IActionResult ResetPassword()
+        {
+            return View();
+
+        }
+        [HttpPost]
+        public IActionResult ResetPassword(PasswordResetViewModel passwordResetViewModel)
+        {
+            AppUser user = _userManager.FindByEmailAsync(passwordResetViewModel.Email).Result;
+            if (user != null)
+            {
+                string passwordResetToken = _userManager.GeneratePasswordResetTokenAsync(user).Result;
+
+                string passwordResetLink = Url.Action("ResetPasswordConfirm", "Home", new
+                {
+                    userId = user.Id,
+                    token=passwordResetToken
+
+                }, HttpContext.Request.Scheme) ;
+
+                Helper.PasswordReset.PasswordResetSendMail(passwordResetLink);
+                ViewBag.status = "Successfull";
+            }
+            else
+            {
+                ModelState.AddModelError("", "Kayıtlı e-mail adresi bulunamamıştır.");
+            }
+            return View(passwordResetViewModel);
+        }
+    }   
 }
