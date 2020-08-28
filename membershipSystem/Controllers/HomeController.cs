@@ -127,11 +127,49 @@ namespace membershipSystem.Controllers
                 }, HttpContext.Request.Scheme) ;
 
                 Helper.PasswordReset.PasswordResetSendMail(passwordResetLink);
-                ViewBag.status = "Successfull";
+                ViewBag.status = "Success";
             }
             else
             {
                 ModelState.AddModelError("", "Kayıtlı e-mail adresi bulunamamıştır.");
+            }
+            return View(passwordResetViewModel);
+        }
+
+        public IActionResult ResetPasswordConfirm(string userId, string token)
+        {
+            TempData["userId"] = userId;
+            TempData["token"] = token;
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPasswordConfirm([Bind("Password")]PasswordResetViewModel passwordResetViewModel)
+        {
+            string userId = TempData["userId"].ToString();
+            string token = TempData["token"].ToString();
+
+            AppUser user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                IdentityResult result= await _userManager.ResetPasswordAsync(user, token, passwordResetViewModel.Password);
+                if (result.Succeeded)
+                {
+                    await _userManager.UpdateSecurityStampAsync(user);
+                    ViewBag.status = "success";
+                }
+                else
+                {
+                    foreach (var item in result.Errors)
+                    {
+                        ModelState.AddModelError("", item.Description);
+                    }
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Bir hata meydana geldi.Lütfen daha sonra tekrar deneyiniz.");
             }
             return View(passwordResetViewModel);
         }
