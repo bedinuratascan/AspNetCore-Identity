@@ -10,14 +10,14 @@ using membershipSystem.Models;
 namespace membershipSystem.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    [Migration("20200810203142_Initial")]
+    [Migration("20200915124845_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.6")
+                .HasAnnotation("ProductVersion", "3.1.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
