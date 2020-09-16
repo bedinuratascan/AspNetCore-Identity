@@ -32,5 +32,48 @@ namespace membershipSystem.Controllers
 
             return View(userViewModel);
         }
+
+        public IActionResult PasswordChange()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult PasswordChange(PasswordChangeViewModel passwordChangeViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                AppUser user = _userManager.FindByNameAsync(User.Identity.Name).Result;
+                if (user != null)
+                {
+                    bool exist = _userManager.CheckPasswordAsync(user, passwordChangeViewModel.PasswordOld).Result;
+
+                    if (exist)
+                    {
+                        IdentityResult result = _userManager.ChangePasswordAsync(user, passwordChangeViewModel.PasswordOld, passwordChangeViewModel.PasswordNew).Result;
+
+                        if (result.Succeeded)
+                        {
+                            _userManager.UpdateSecurityStampAsync(user);
+                            _signInManager.SignOutAsync();
+                            _signInManager.PasswordSignInAsync(user, passwordChangeViewModel.PasswordNew, true,false);
+                            ViewBag.success = "true";
+                        }
+                        else
+                        {
+                            foreach (IdentityError item in result.Errors)
+                            {
+                                ModelState.AddModelError("", item.Description);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Eski Şifreniz Yanlış");
+                    }
+                }
+            }
+            return View(passwordChangeViewModel);
+        }
     }
 }
