@@ -33,6 +33,46 @@ namespace membershipSystem.Controllers
             return View(userViewModel);
         }
 
+        public IActionResult UserEdit()
+        {
+            AppUser user = _userManager.FindByNameAsync(User.Identity.Name).Result;
+            UserViewModel userViewModel = _mapper.Map<AppUser, UserViewModel>(user);
+
+            return View(userViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UserEdit(UserViewModel userViewModel)
+        {
+            ModelState.Remove("Password");
+            if (ModelState.IsValid)
+            {
+                AppUser user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+                user.UserName = userViewModel.UserName;
+                user.Email = userViewModel.Email;
+                user.PhoneNumber = userViewModel.PhoneNumber;
+
+                IdentityResult result = await _userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    await _userManager.UpdateSecurityStampAsync(user);
+                    await _signInManager.SignOutAsync();
+                    await _signInManager.SignInAsync(user, true);
+                    ViewBag.success = "true";
+                }
+                else
+                {
+                    foreach (var item in result.Errors)
+                    {
+                        ModelState.AddModelError("", item.Description);
+                    }
+                }
+            }
+            return View(userViewModel);
+        }
+
         public IActionResult PasswordChange()
         {
             return View();

@@ -24,6 +24,10 @@ namespace membershipSystem.Controllers
 
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                RedirectToAction("Index", "Member");
+            }
             return View();
         }
 
