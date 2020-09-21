@@ -10,16 +10,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace membershipSystem.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        public UserManager<AppUser> _userManager { get; set; }
-        public SignInManager<AppUser> _signInManager { get; set; }
-        private readonly IMapper _mapper;
-        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper)
+        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper):base(userManager,signInManager,mapper)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _mapper = mapper;
         }
 
         public IActionResult Index()
@@ -101,10 +95,7 @@ namespace membershipSystem.Controllers
                 }
                 else
                 {
-                    foreach (IdentityError item in result.Errors)
-                    {
-                        ModelState.AddModelError("", item.Description);
-                    }
+                    AddModelError(result);
                 }
             }
             return View(userViewModel);
@@ -165,10 +156,7 @@ namespace membershipSystem.Controllers
                 }
                 else
                 {
-                    foreach (var item in result.Errors)
-                    {
-                        ModelState.AddModelError("", item.Description);
-                    }
+                    AddModelError(result);
                 }
             }
             else

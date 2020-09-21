@@ -1,4 +1,5 @@
-﻿using System;
+﻿using membershipSystem.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -24,5 +25,17 @@ namespace membershipSystem.ViewModels
         [Display(Name = "Şifre")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        [Display(Name = "Şehir")]
+        public string City { get; set; }
+
+        public string Picture { get; set; }
+
+        [Display(Name = "Doğum Tarihi")]
+        [DataType(DataType.Date)]
+        public DateTime? Birthday { get; set; }
+
+        [Display(Name = "Cinsiyet")]
+        public Gender Gender { get; set; }
     }
 }
