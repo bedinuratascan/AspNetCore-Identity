@@ -13,13 +13,15 @@ namespace membershipSystem.Controllers
     {
         protected UserManager<AppUser> _userManager { get; set; }
         protected SignInManager<AppUser> _signInManager { get; set; }
+        protected RoleManager<AppRole> _roleManager { get; set; }
         protected readonly IMapper _mapper;
 
         protected AppUser CurrentUser => _userManager.FindByNameAsync(User.Identity.Name).Result;
-        public BaseController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper)
+        public BaseController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,RoleManager<AppRole> roleManager, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _mapper = mapper;
         }
 

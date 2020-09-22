@@ -18,7 +18,7 @@ namespace membershipSystem.Controllers
     [Authorize]
     public class MemberController : BaseController
     {
-        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper):base(userManager,signInManager,mapper)
+        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper):base(userManager,signInManager,null,mapper)
         {
         }
 
@@ -131,6 +131,11 @@ namespace membershipSystem.Controllers
         public void LogOut()
         {
             _signInManager.SignOutAsync();
+        }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

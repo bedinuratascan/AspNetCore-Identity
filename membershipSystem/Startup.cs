@@ -60,6 +60,7 @@ namespace membershipSystem
                 options.Cookie = cookieBuilder;
                 options.SlidingExpiration = true;
                 options.ExpireTimeSpan = TimeSpan.FromDays(60);
+                options.AccessDeniedPath = new PathString("/Member/AccessDenied");
             });
 
             services.AddMvc(option => option.EnableEndpointRouting = false);

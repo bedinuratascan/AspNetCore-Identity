@@ -12,7 +12,7 @@ namespace membershipSystem.Controllers
 {
     public class HomeController : BaseController
     {
-        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper):base(userManager,signInManager,mapper)
+        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper):base(userManager,signInManager,null,mapper)
         {
         }
 
