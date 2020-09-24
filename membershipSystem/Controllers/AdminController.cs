@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using membershipSystem.Models;
+using membershipSystem.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,34 @@ namespace membershipSystem.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult CreateRole()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult CreateRole(RoleViewModel roleViewModel)
+        {
+            AppRole role = new AppRole();
+            role.Name = roleViewModel.Name;
+            IdentityResult result = _roleManager.CreateAsync(role).Result;
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Roles");
+            }
+            else
+            {
+                AddModelError(result);
+            }
+
+            return View(roleViewModel);
+        }
+
+        public IActionResult Roles()
+        {
+            return View(_roleManager.Roles.ToList());
         }
         public IActionResult Users()
         {
