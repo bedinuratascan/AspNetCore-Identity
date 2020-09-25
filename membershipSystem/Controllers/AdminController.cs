@@ -50,5 +50,17 @@ namespace membershipSystem.Controllers
         {
             return View(_userManager.Users.ToList());
         }
+
+        public IActionResult RoleDelete(string id)
+        {
+            AppRole role = _roleManager.FindByIdAsync(id).Result;
+
+            if (role != null)
+            {
+                IdentityResult result = _roleManager.DeleteAsync(role).Result;
+            }
+
+            return RedirectToAction("Roles");
+        }
     }
 }

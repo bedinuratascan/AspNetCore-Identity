@@ -6,10 +6,12 @@
 
 <h3>Roller</h3>
 <hr />
+
 <table class="table table-bordered table-striped">
     <tr>
         <td>Id</td>
         <td>Rol İsmi</td>
+        <td>Sil</td>
     </tr>
     @if (Model.Count() == 0)
     {
@@ -24,6 +26,11 @@
             <tr>
                 <td>@item.Id</td>
                 <td>@item.Name</td>
+                <td>
+                    <form asp-action="RoleDelete" asp-route-id="@item.Id" method="post">
+                        <button class="btn btn-danger" type="submit">Sil</button>
+                    </form>
+                </td>
             </tr>
         }
     }
