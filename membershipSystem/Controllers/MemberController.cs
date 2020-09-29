@@ -137,5 +137,17 @@ namespace membershipSystem.Controllers
         {
             return View();
         }
+
+        [Authorize(Roles = "Manager,Admin")]
+        public IActionResult Manager()
+        {
+            return View();
+        }
+        
+        [Authorize(Roles ="Editör,Admin")]
+        public IActionResult Editor()
+        {
+            return View();
+        }
     }
 }
