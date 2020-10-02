@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using membershipSystem.CustomValidation;
 using membershipSystem.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +32,15 @@ namespace membershipSystem
             {
                 options.UseSqlServer(Configuration["ConnectionString:DefaultConnectionString"]);
             });
+
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("AnkaraPolicy", pol =>
+                {
+                    pol.RequireClaim("City", "Ankara");
+                });
+            });
+
             services.AddAutoMapper(typeof(Startup));
             services.AddIdentity<AppUser, AppRole>(option=> 
             {
@@ -63,7 +73,10 @@ namespace membershipSystem
                 options.AccessDeniedPath = new PathString("/Member/AccessDenied");
             });
 
+            services.AddScoped<IClaimsTransformation, ClaimProvider.ClaimProvider>();
+
             services.AddMvc(option => option.EnableEndpointRouting = false);
+
          
         }
 
