@@ -6,6 +6,7 @@ using AutoMapper;
 using membershipSystem.CustomValidation;
 using membershipSystem.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +34,8 @@ namespace membershipSystem
                 options.UseSqlServer(Configuration["ConnectionString:DefaultConnectionString"]);
             });
 
+            services.AddTransient<IAuthorizationHandler, ExpireDateExchangeHandler>();
+
             services.AddAuthorization(opt =>
             {
                 opt.AddPolicy("AnkaraPolicy", pol =>
@@ -42,6 +45,10 @@ namespace membershipSystem
                 opt.AddPolicy("ViolencePolicy", pol =>
                 {
                     pol.RequireClaim("Violence");
+                });
+                opt.AddPolicy("ExchangePolicy", pol =>
+                {
+                    pol.AddRequirements(new ExpireDateExchangeRequirement());
                 });
             });
 

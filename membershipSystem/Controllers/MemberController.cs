@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using membershipSystem.Enums;
@@ -135,13 +136,17 @@ namespace membershipSystem.Controllers
 
         public IActionResult AccessDenied(string ReturnUrl)
         {
-            if (ReturnUrl.Contains("violencePage"))
+            if (ReturnUrl.Contains("ViolencePage"))
             {
                 ViewBag.message = "Erişmeye çalıştığınız sayfada şiddet içerikli ögeler bulunduğundan dolayı 15 yaşından büyük olmanız gerekmektedir.";
             }
-            else if (ReturnUrl.Contains("ankaraPage"))
+            else if (ReturnUrl.Contains("AnkaraPage"))
             {
                 ViewBag.message = "Bu sayfaya sadece şehir alanı Ankara olan kullanıclar erişebilmektedir.";
+            }
+            else if(ReturnUrl.Contains("Exchange"))
+            {
+                ViewBag.message = "30 günlük ücretsiz deneme hakkınız sona ermiştir.";
             }
             else
             {
@@ -171,6 +176,30 @@ namespace membershipSystem.Controllers
         }
         [Authorize(Policy = "ViolencePolicy")]
         public IActionResult ViolencePage()
+        {
+            return View();
+        }
+
+
+        public async Task<IActionResult> ExchangeRedirect()
+        {
+
+            bool result = User.HasClaim(x => x.Type == "ExpireDateExchange");
+
+            if (!result)
+            {
+                Claim ExpireDateExchange = new Claim("ExpireDateExchange", DateTime.Now.AddDays(30).Date.ToShortDateString(), ClaimValueTypes.String, "Internal");
+
+                await _userManager.AddClaimAsync(CurrentUser, ExpireDateExchange);
+                await _signInManager.SignOutAsync();
+                await _signInManager.SignInAsync(CurrentUser, true);
+            }
+
+            return RedirectToAction("Exchange");
+        }
+
+        [Authorize(Policy = "ExchangePolicy")]
+        public IActionResult Exchange()
         {
             return View();
         }
