@@ -39,6 +39,10 @@ namespace membershipSystem
                 {
                     pol.RequireClaim("City", "Ankara");
                 });
+                opt.AddPolicy("ViolencePolicy", pol =>
+                {
+                    pol.RequireClaim("Violence");
+                });
             });
 
             services.AddAutoMapper(typeof(Startup));

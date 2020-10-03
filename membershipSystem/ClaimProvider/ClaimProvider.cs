@@ -26,6 +26,19 @@ namespace membershipSystem.ClaimProvider
 
                 if (user != null)
                 {
+                    if (user.Birthday != null)
+                    {
+                        var today = DateTime.Today;
+                        var age = today.Year - user.Birthday?.Year;
+                        bool status = false;
+                        if (age > 15)
+                        {
+                            Claim ViolenceClaim = new Claim("Violence", true.ToString(), ClaimValueTypes.String, "Internal");
+
+                            identity.AddClaim(ViolenceClaim);
+                        }
+                    }
+
                     if (user.City != null)
                     {
                         if (!principal.HasClaim(c=>c.Type=="City"))

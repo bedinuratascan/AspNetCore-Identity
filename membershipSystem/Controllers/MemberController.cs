@@ -133,8 +133,21 @@ namespace membershipSystem.Controllers
             _signInManager.SignOutAsync();
         }
 
-        public IActionResult AccessDenied()
+        public IActionResult AccessDenied(string ReturnUrl)
         {
+            if (ReturnUrl.Contains("violencePage"))
+            {
+                ViewBag.message = "Erişmeye çalıştığınız sayfada şiddet içerikli ögeler bulunduğundan dolayı 15 yaşından büyük olmanız gerekmektedir.";
+            }
+            else if (ReturnUrl.Contains("ankaraPage"))
+            {
+                ViewBag.message = "Bu sayfaya sadece şehir alanı Ankara olan kullanıclar erişebilmektedir.";
+            }
+            else
+            {
+                ViewBag.message = "Bu sayfaya erişim izininiz bulunmamaktadır.";
+            }
+
             return View();
         }
 
@@ -156,6 +169,10 @@ namespace membershipSystem.Controllers
         {
             return View();
         }
-
+        [Authorize(Policy = "ViolencePolicy")]
+        public IActionResult ViolencePage()
+        {
+            return View();
+        }
     }
 }
