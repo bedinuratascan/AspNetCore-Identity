@@ -42,8 +42,18 @@ namespace membershipSystem.Controllers
 
                     return View(userLogin);
                 }
+
+                if (_userManager.IsEmailConfirmedAsync(user).Result==false)
+                {
+                    ModelState.AddModelError("", "Email adresiniz onaylanmamıştır.Lütfen e-postanızı kontrol ediniz.");
+
+                    return View(userLogin);
+                }
+
                 await _signInManager.SignOutAsync();
+
                 Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(user, userLogin.Password, userLogin.RememberMe, false);
+
                 if (result.Succeeded)
                 {
                     await _userManager.ResetAccessFailedCountAsync(user);
@@ -91,6 +101,16 @@ namespace membershipSystem.Controllers
                 IdentityResult result = await _userManager.CreateAsync(appUser, userViewModel.Password);
                 if (result.Succeeded)
                 {
+                    string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+
+                    string link = Url.Action("ConfirmEmail", "Home", new
+                    {
+                        userId = appUser.Id,
+                        token=confirmationToken
+                    },protocol:HttpContext.Request.Scheme);
+
+                    Helper.EmailConfirmation.SendMail(link, appUser.Email);
+
                     return RedirectToAction("LogIn");
                 }
                 else
@@ -121,7 +141,7 @@ namespace membershipSystem.Controllers
 
                 }, HttpContext.Request.Scheme) ;
 
-                Helper.PasswordReset.PasswordResetSendMail(passwordResetLink);
+                Helper.PasswordReset.PasswordResetSendMail(passwordResetLink,user.Email);
                 ViewBag.status = "Success";
             }
             else
@@ -164,6 +184,24 @@ namespace membershipSystem.Controllers
                 ModelState.AddModelError("", "Bir hata meydana geldi.Lütfen daha sonra tekrar deneyiniz.");
             }
             return View(passwordResetViewModel);
+        }
+
+
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            IdentityResult result = await _userManager.ConfirmEmailAsync(user, token);
+
+            if (result.Succeeded)
+            {
+                ViewBag.status = "Email adresiniz onaylanmıştır.Login ekranından giriş yapabilirsiniz.";
+            }
+            else
+            {
+                ViewBag.status = "Bir hata meydana geldi.Lütfen daha sonra tekrar deneyiniz.";
+            }
+            return View();
         }
     }   
 }

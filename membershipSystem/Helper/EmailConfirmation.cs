@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace membershipSystem.Helper
 {
-    public static class PasswordReset
+    public class EmailConfirmation
     {
-       public static void PasswordResetSendMail(string link, string email)
+        public static void SendMail(string link, string email)
         {
             MailMessage mail = new MailMessage();
             SmtpClient smtpClient = new SmtpClient("smtp.gmail.com");
             mail.From = new MailAddress("bedinuratascan@gmail.com");
             mail.To.Add(email);
-            mail.Subject = $"www.bedinur.com::Şifre Yenileme";
-            mail.Body = "<h2>Şifrenizi yenilemek için lütfen aşağıdaki linke tıklayınız</h2><hr/>";
-            mail.Body += $"<a href='{link}'>Şifre Yenileme Linki</a>";
+            mail.Subject = $"www.bedinur.com::Email Doğrulama";
+            mail.Body = "<h2>Email adresinizi doğrulamak için lütfen aşağıdaki linke tıklayınız</h2><hr/>";
+            mail.Body += $"<a href='{link}'>Email Doğrulama Linki</a>";
             mail.IsBodyHtml = true;
             smtpClient.Port = 587;
             smtpClient.EnableSsl = true;
@@ -24,6 +24,5 @@ namespace membershipSystem.Helper
             smtpClient.Credentials = new System.Net.NetworkCredential("bedinuratascan@gmail.com", "xyz123");
             smtpClient.Send(mail);
         }
-        
     }
 }
