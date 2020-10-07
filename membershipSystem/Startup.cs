@@ -52,6 +52,12 @@ namespace membershipSystem
                 });
             });
 
+            services.AddAuthentication().AddFacebook(opt =>
+            {
+                opt.AppId = Configuration["Authentication:Facebook:AppId"];
+                opt.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+            });
+
             services.AddAutoMapper(typeof(Startup));
             services.AddIdentity<AppUser, AppRole>(option=> 
             {
