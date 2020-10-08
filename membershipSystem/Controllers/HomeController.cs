@@ -214,7 +214,16 @@ namespace membershipSystem.Controllers
             return new ChallengeResult("Facebook", properties);
         }
 
-        public async Task<IActionResult> FacebookResponse(string ReturnUrl = "/member")
+        public IActionResult GoogleLogin(string ReturnUrl)
+        {
+            string RedirectUrl = Url.Action("ExternalResponse", "Home", new { ReturnUrl = ReturnUrl });
+
+            AuthenticationProperties properties = _signInManager.ConfigureExternalAuthenticationProperties("Goole", RedirectUrl);
+
+            return new ChallengeResult("Google", properties);
+        }
+
+        public async Task<IActionResult> ExternalResponse(string ReturnUrl = "/member")
         {
             ExternalLoginInfo info = await _signInManager.GetExternalLoginInfoAsync();
 

@@ -56,6 +56,10 @@ namespace membershipSystem
             {
                 opt.AppId = Configuration["Authentication:Facebook:AppId"];
                 opt.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+            }).AddGoogle(opt =>
+            {
+                opt.ClientId= Configuration["Authentication:Google:ClientID"];
+                opt.ClientSecret= Configuration["Authentication:Google:ClientSecret"];
             });
 
             services.AddAutoMapper(typeof(Startup));
