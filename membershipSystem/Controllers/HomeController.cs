@@ -251,13 +251,20 @@ namespace membershipSystem.Controllers
                        
                         if (addLoginResult.Succeeded)
                         {
-                            await _signInManager.SignInAsync(user, true);
+                            await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, true);
                             return Redirect(ReturnUrl);
                         }
                     }
                 }
             }
-            return Redirect(ReturnUrl);
+            List<string> errors = ModelState.Values.SelectMany(x => x.Errors).Select(y => y.ErrorMessage).ToList();
+
+            return View("Error", errors);
+        }
+
+        public IActionResult Error()
+        {
+            return View();
         }
     }   
 }
