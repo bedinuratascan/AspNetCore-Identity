@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using AutoMapper;
 using membershipSystem.Models;
@@ -99,6 +100,12 @@ namespace membershipSystem.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (_userManager.Users.Any(x => x.PhoneNumber == userViewModel.PhoneNumber))
+                {
+                    ModelState.AddModelError("", "Bu telefon numarası kayıtlıdır.");
+                    return View(userViewModel);
+                }
+
                 AppUser appUser = _mapper.Map<UserViewModel, AppUser>(userViewModel);
                 IdentityResult result = await _userManager.CreateAsync(appUser, userViewModel.Password);
                 if (result.Succeeded)

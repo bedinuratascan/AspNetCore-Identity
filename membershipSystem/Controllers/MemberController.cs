@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using AutoMapper;
 using membershipSystem.Enums;
@@ -50,6 +51,17 @@ namespace membershipSystem.Controllers
             if (ModelState.IsValid)
             {
                 AppUser user = CurrentUser;
+
+                string phone = _userManager.GetPhoneNumberAsync(user).Result;
+                if (phone != userViewModel.PhoneNumber)
+                {
+                    if (_userManager.Users.Any(x => x.PhoneNumber == userViewModel.PhoneNumber))
+                    {
+                        ModelState.AddModelError("", "Bu telefon numarası başka bir kullanıcı tarafından kullanılmaktadır.");
+                        return View(userViewModel);
+                    }
+                }
+
                 ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
 
                 if (userPicture!=null && userPicture.Length > 0)
