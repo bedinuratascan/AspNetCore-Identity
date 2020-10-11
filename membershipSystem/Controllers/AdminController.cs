@@ -161,5 +161,32 @@ namespace membershipSystem.Controllers
             return View(User.Claims.ToList());
         }
 
+        public async Task<IActionResult> ResetUserPassword(string id)
+        {
+
+            AppUser user = await _userManager.FindByIdAsync(id);
+
+            PasswordResetByAdminViewModel passwordResetByAdminViewModel = new PasswordResetByAdminViewModel();
+
+            passwordResetByAdminViewModel.UserId = user.Id;
+
+
+            return View(passwordResetByAdminViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetUserPassword(PasswordResetByAdminViewModel passwordResetByAdminViewModel)
+        {
+            AppUser user = await _userManager.FindByIdAsync(passwordResetByAdminViewModel.UserId);
+
+            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            await _userManager.ResetPasswordAsync(user, token, passwordResetByAdminViewModel.NewPassword);
+
+            await _userManager.UpdateSecurityStampAsync(user);
+
+            return RedirectToAction("Users");
+        }
+
     }
 }
